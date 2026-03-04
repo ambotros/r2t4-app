@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>R2T4 Comment & Letter Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* R2T4 Comment & Letter Generator (All-in-one) */
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f5f7;
+      padding: 24px;
+    }
+
+    .app-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      border: 2px solid #e7e7e7;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    h3 {
+      color: #2e7d32;
+      border-bottom: 2px solid #2e7d32;
+      padding-bottom: 6px;
+      margin-top: 22px;
+    }
+
+    h4 {
+      margin: 0 0 10px 0;
+      color: #2e7d32;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .main-selector {
+      background: #e8f4f8;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      border: 1px solid #b3d9e6;
+    }
+
+    .tool-section {
+      display: none;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+    }
+
+    .tool-section.active {
+      display: block;
+    }
+
+    .field-group {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      border-left: 4px solid #4CAF50;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    label.flow-indicator::after {
+      content: " →";
+      color: #4CAF50;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 14px;
+      border-radius: 6px;
+      border: 1px solid #cfcfcf;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 12px;
+      font-weight: bold;
+    }
+
+    button:hover { background-color: #3da543; }
+
+    pre {
+      white-space: pre-wrap;
+      background: #f1f1f1;
+      padding: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .hidden { display: none !important; }
+
+    .results {
+      background: #f0f8f0;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+
+    .results p {
+      margin: 8px 0;
+      font-weight: bold;
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .checkbox-wrapper input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+
+    .quick-mode-box {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .copy-btn {
+      background: #007bff;
+      width: auto;
+      padding: 8px 12px;
+      font-size: 12px;
+      margin: 4px 6px 0 0;
+    }
+
+    .copy-btn:hover { background: #0056b3; }
+
+    .copy-group h5 {
+      margin: 8px 0 6px;
+      font-size: 13px;
+    }
+
+    hr {
+      margin: 28px 0;
+      border: none;
+      border-top: 1px solid #e1e1e1;
+    }
+
+    /* Floating Calculator Styles */
+    .floating-calculator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 280px;
+      background: #fff;
+      border: 2px solid #4CAF50;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      z-index: 1000;
+      display: none;
+      font-family: Arial, sans-serif;
+    }
+
+    .calc-header {
+      background: #4CAF50;
+      color: white;
+      padding: 12px 15px;
+      border-radius: 10px 10px 0 0;
+      cursor: move;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .calc-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .calc-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .calc-body {
+      padding: 10px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .calc-body.minimized {
+      display: none;
+    }
+
+    .calc-section {
+      margin-bottom: 10px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .calc-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .calc-section-header {
+      background: #f5f5f5;
+      padding: 8px 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .calc-section-header:hover {
+      background: #eeeeee;
+    }
+
+    .calc-section h4 {
+      margin: 0;
+      color: #2e7d32;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .calc-section-toggle {
+      font-size: 12px;
+      color: #666;
+      transition: transform 0.2s;
+    }
+
+    .calc-section.collapsed .calc-section-toggle {
+      transform: rotate(-90deg);
+    }
+
+    .calc-section-content {
+      padding: 10px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .calc-section.collapsed .calc-section-content {
+      display: none;
+    }
+
+    .calc-minimize {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    .calc-minimize:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .calc-header-buttons {
+      display: flex;
+      align-items: center;
+    }
+
+    .calc-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .calc-input {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .calc-label {
+      font-size: 11px;
+      color: #666;
+      min-width: 60px;
+    }
+
+    .calc-result {
+      background: #f0f8f0;
+      padding: 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 12px;
+      color: #2e7d32;
+      margin: 5px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .calc-send-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 3px 6px;
+      font-size: 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    .calc-send-btn:hover {
+      background: #0056b3;
+    }
+
+    .calc-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+      z-index: 999;
+      font-size: 14px;
+    }
+
+    .calc-toggle:hover {
+      background: #3da543;
+      transform: scale(1.05);
+    }
+
+    .calc-target-info {
+      background: #e3f2fd;
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #1565c0;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    /* Reset Button Styles */
+    .reset-btn {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 10px;
+      font-weight: bold;
+    }
+
+    .reset-btn:hover {
+      background: #e55656;
+    }
+
+    /* Success Toast Styles */
+    .success-toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+      z-index: 10000;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .success-toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-wrap">
+    <h2>R2T4 Comment & Letter Generator</h2>
+
+    <div class="main-selector">
+      <label for="toolType">Select Tool Type:</label>
+      <select id="toolType">
+        <option value="">-- Choose a Tool --</option>
+        <option value="standard-r2t4">Standard R2T4 & Post Withdrawal Comments</option>
+        <option value="inadvertent-nor2t4">Inadvertent Overpayment & No R2T4</option>
+        <option value="pell-overpayment">Pell Overpayment</option>
+        <option value="pwd-letter">Post Withdrawal Letter Generator</option>
+      </select>
+    </div>
+
+    <!-- Standard R2T4 Tool -->
+    <section id="standard-r2t4" class="tool-section" aria-hidden="true">
+      <h3>Standard R2T4 & Post Withdrawal Comments</h3>
+
+      <div class="quick-mode-box">
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="quickMode">
+          <label for="quickMode"><strong>Quick Mode</strong> - Generate template with blanks</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <h4>Comment Setup</h4>
+
+        <label for="commentType">Comment Type</label>
+        <select id="commentType">
+          <option value="standard">Standard R2T4</option>
+          <option value="postWithdrawal">Post Withdrawal</option>
+        </select>
+
+        <label for="source">Source</label>
+        <select id="source">
+          <option value="PELL">PELL</option>
+          <option value="DLU">DLU</option>
+          <option value="DLS">DLS</option>
+          <option value="DLGP">DLGP</option>
+          <option value="FSEOG">FSEOG</option>
+        </select>
+      </div>
+
+      <div id="fullModeFields">
+        <div class="field-group">
+          <h4>Comment Line 1 - Amount Info</h4>
+          <label class="flow-indicator" for="amount">Net Return Amount</label>
+          <input type="text" id="amount" placeholder="1228 or $1,228">
+
+          <label class="flow-indicator" for="gross">Gross Return Amount (non-Pell)</label>
+          <input type="text" id="gross" placeholder="6833 or 6,833">
+
+          <label class="flow-indicator" for="term">Award Term/Year</label>
+          <input type="text" id="term" placeholder="2025-50">
+
+          <label class="flow-indicator" for="code">R2T4 Code</label>
+          <select id="code">
+            <option value="A">Code A</option>
+            <option value="B">Code B</option>
+            <option value="D">Code D</option>
+            <option value="E">Code E</option>
+            <option value="F">Code F</option>
+            <option value="L">Code L</option>
+            <option value="M">Code M</option>
+            <option value="N">Code N</option>
+            <option value="O">Code O</option>
+            <option value="T">Code T</option>
+            <option value="W">Code W</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <h4>Credit Info (Pell Only)</h4>
+          <label id="creditsLabel" for="credits">Pell Credits</label>
+          <input type="text" id="credits" placeholder="from 10 credits TO 5 credits">
+        </div>
+
+        <div class="field-group">
+          <h4>Key Dates</h4>
+          <label class="flow-indicator" for="dod">DOD Date (e.g., 3/28/2025)</label>
+          <input type="text" id="dod">
+
+          <label class="flow-indicator" for="r2wd">R2WD Date (e.g., 3/26/2025)</label>
+          <input type="text" id="r2wd">
+
+          <label class="flow-indicator" for="deadline">R2T4 Deadline (e.g., 4/27/2025)</label>
+          <input type="text" id="deadline">
+        </div>
+
+        <div id="pellFields" class="field-group hidden">
+          <h4>Pell Eligibility Info</h4>
+          <label class="flow-indicator" for="pellEligibility">Pell Eligibility</label>
+          <input type="text" id="pellEligibility" placeholder="$1,233">
+
+          <label for="cla">Class Load Adjustment Total</label>
+          <input type="text" id="cla" placeholder="1011 or $1,011">
+
+          <label for="r2t4Adj">R2T4 Adjustment</label>
+          <input type="text" id="r2t4Adj" placeholder="500 or $500">
+        </div>
+
+        <div id="postWithdrawalFields" class="field-group hidden">
+          <h4>Post Withdrawal Details</h4>
+          <label for="loanCreated">Loan Created Date</label>
+          <input type="text" id="loanCreated">
+          <label for="loanDisbursed">Loan Disbursed Date</label>
+          <input type="text" id="loanDisbursed">
+          <label for="isirDate">ISIR Date</label>
+          <input type="text" id="isirDate" placeholder="e.g., 5/2/2024">
+          <label for="pellDisbursed">Pell Disbursed Date</label>
+          <input type="text" id="pellDisbursed" placeholder="e.g., 3/6/2025">
+          <label for="pwdEligibility">PWD Eligibility</label>
+          <input type="text" id="pwdEligibility" list="pwdEligibilityOptions" placeholder="Select or type...">
+          <datalist id="pwdEligibilityOptions">
+            <option value="NOT ELIGIBLE BEYOND FIRST DISBURSEMENT">
+            <option value="$___ PELL ONLY">
+            <option value="$___ DLU ($___  Gross)">
+            <option value="$___ DLS ($___  Gross)">
+            <option value="$___ DLGP ($___  Gross)">
+          </datalist>
+        </div>
+      </div>
+
+      <div id="quickModeFields" class="hidden">
+        <div class="field-group">
+          <h4>Basic Info for Template</h4>
+          <label class="flow-indicator" for="quickCode">R2T4 Code</label>
+          <select id="quickCode">
+            <option value="A">Code A</option>
+            <option value="B">Code B</option>
+            <option value="D">Code D</option>
+            <option value="E">Code E</option>
+            <option value="F">Code F</option>
+            <option value="L">Code L</option>
+            <option value="M">Code M</option>
+            <option value="N">Code N</option>
+            <option value="O">Code O</option>
+            <option value="T">Code T</option>
+            <option value="W">Code W</option>
+          </select>
+
+          <label class="flow-indicator" for="quickDod">DOD Date (e.g., 3/28/2025)</label>
+          <input type="text" id="quickDod">
+
+          <label class="flow-indicator" for="quickR2wd">R2WD Date (e.g., 3/26/2025)</label>
+          <input type="text" id="quickR2wd">
+
+          <label class="flow-indicator" for="quickDeadline">R2T4 Deadline (e.g., 4/27/2025)</label>
+          <input type="text" id="quickDeadline">
+        </div>
+      </div>
+
+      <button type="button" id="btn-generate-standard">Generate Comment</button>
+      <button type="button" class="reset-btn" id="btn-reset-standard">🗑️ Reset All</button>
+      <h3>Generated Comment:</h3>
+      <pre id="standardOutput" aria-live="polite"></pre>
+      <button type="button" id="btn-copy-standard">Copy Comment to Clipboard</button>
+    </section>
+
+    <!-- Inadvertent/No R2T4 Tool -->
+    <section id="inadvertent-nor2t4" class="tool-section" aria-hidden="true">
+      <h3>Inadvertent Overpayment & No R2T4</h3>
+      <label for="inadvertentCommentType">Comment Type</label>
+      <select id="inadvertentCommentType">
+        <option value="inadvertent">Inadvertent Overpayment</option>
+        <option value="nor2t4">No R2T4</option>
+      </select>
+
+      <div id="inadvertentFields" class="hidden">
+        <div class="field-group">
+          <h4>Comment Line 1 - Amount Info</h4>
+          <label class="flow-indicator" for="invAmount">Net Return Amount</label>
+          <input type="text" id="invAmount" placeholder="6762 or $6,762">
+
+          <label class="flow-indicator" for="invSource">Source</label>
+          <select id="invSource">
+            <option value="PELL">PELL</option>
+            <option value="DLU">DLU</option>
+            <option value="DLS">DLS</option>
+            <option value="DLGP">DLGP</option>
+            <option value="FSEOG">FSEOG</option>
+          </select>
+
+          <label class="flow-indicator" for="invGross">Gross Return Amount</label>
+          <input type="text" id="invGross" placeholder="6834 or $6,834">
+
+          <label class="flow-indicator" for="invTerm">Award Term/Year</label>
+          <input type="text" id="invTerm" placeholder="2025-50">
+
+          <label class="flow-indicator" for="invCode">R2T4 Code</label>
+          <select id="invCode">
+            <option value="A">Code A</option>
+            <option value="B">Code B</option>
+            <option value="D">Code D</option>
+            <option value="E">Code E</option>
+            <option value="F">Code F</option>
+            <option value="L">Code L</option>
+            <option value="M">Code M</option>
+            <option value="N">Code N</option>
+            <option value="O">Code O</option>
+            <option value="T">Code T</option>
+            <option value="W">Code W</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <h4>Key Dates</h4>
+          <label class="flow-indicator" for="invDod">DOD Date (e.g., 3/22/2025)</label>
+          <input type="text" id="invDod">
+
+          <label class="flow-indicator" for="invR2wd">R2WD Date (e.g., 3/8/2025)</label>
+          <input type="text" id="invR2wd">
+
+          <label class="flow-indicator" for="invDeadline">R2T4 Deadline (e.g., 4/21/2025)</label>
+          <input type="text" id="invDeadline">
+        </div>
+
+        <div class="field-group">
+          <h4>Loan Details</h4>
+          <label for="invLoanCreated">Loan Created Date</label>
+          <input type="text" id="invLoanCreated">
+          <label for="invLoanDisbursed">Loan Disbursed Date</label>
+          <input type="text" id="invLoanDisbursed">
+        </div>
+      </div>
+
+      <div id="noR2T4Fields" class="hidden">
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="useR2T4Review">
+          <label for="useR2T4Review">Use "R2T4 Review" format instead of "NO R2T4 REQUIRED"</label>
+        </div>
+
+        <label for="noR2T4Term">Award Term/Year</label>
+        <input type="text" id="noR2T4Term" placeholder="2025-50">
+
+        <label for="noR2T4Code">R2T4 Code</label>
+        <select id="noR2T4Code">
+          <option value="A">Code A</option>
+          <option value="B">Code B</option>
+          <option value="D">Code D</option>
+          <option value="E">Code E</option>
+          <option value="F">Code F</option>
+          <option value="L">Code L</option>
+          <option value="M">Code M</option>
+          <option value="N">Code N</option>
+          <option value="O">Code O</option>
+          <option value="T">Code T</option>
+          <option value="W">Code W</option>
+        </select>
+
+        <label for="noR2T4Reason">Reason</label>
+        <select id="noR2T4Reason">
+          <option value="PENDING AWARD(S) STUDENT DID NOT ACCEPT">PENDING AWARD(S) STUDENT DID NOT ACCEPT</option>
+          <option value="MISSING MPN & ENTRANCE COUNSELING">MISSING MPN & ENTRANCE COUNSELING</option>
+          <option value="Student DECLINED awards">Student DECLINED awards</option>
+          <option value="Disbursed and were returned per student request (see comment #)">Disbursed and were returned per student request (see comment #)</option>
+          <option value="STU WAS PACKAGED AFTER LDP">STU WAS PACKAGED AFTER LDP</option>
+          <option value="PENDING AWARD(S) - DROPPED DUE TO ACADEMIC DISMISSAL">PENDING AWARD(S) - DROPPED DUE TO ACADEMIC DISMISSAL</option>
+          <option value="DID NOT DISBURSE - WITHDRAWAL DUE TO ACADEMIC DISMISSAL">DID NOT DISBURSE - WITHDRAWAL DUE TO ACADEMIC DISMISSAL</option>
+          <option value="Created loans due to UG Provisional Hold for Origination">Created loans due to UG Provisional Hold for Origination</option>
+          <option value="Pending Pell did not disburse due to BANNER CONTINGENCY HOLD FOR OFFICIAL TRANSCRIPTS">Pending Pell did not disburse due to BANNER CONTINGENCY HOLD FOR OFFICIAL TRANSCRIPTS</option>
+          <option value="Pending Loans did not disburse due to BANNER CONTINGENCY HOLD FOR OFFICIAL TRANSCRIPTS">Pending Loans did not disburse due to BANNER CONTINGENCY HOLD FOR OFFICIAL TRANSCRIPTS</option>
+          <option value="UNRESOLVED ELIGIBILITY STATUS">UNRESOLVED ELIGIBILITY STATUS</option>
+          <option value="OFFICE USE ONLY- INTERNAL AUDIT- HOLD">OFFICE USE ONLY- INTERNAL AUDIT- HOLD</option>
+          <option value="Student declined; Pell awarded after LDP">Student declined; Pell awarded after LDP</option>
+          <option value="Created loan(s) did not disburse due to FTP hold">Created loan(s) did not disburse due to FTP hold</option>
+          <option value="created loan(s) did not disburse due to: UNRESOLVED SAP STATUS">created loan(s) did not disburse due to: UNRESOLVED SAP STATUS</option>
+          <option value="Due to LTHT status">Due to LTHT status</option>
+        </select>
+
+        <div id="noR2T4ExtraDate" class="hidden">
+          <label for="noR2T4Date">Related Date</label>
+          <input type="text" id="noR2T4Date" placeholder="e.g., 5/12/2025">
+        </div>
+
+        <div id="noR2T4LoanDates" class="hidden">
+          <label for="noR2T4LoanCreated">Loan Created Date</label>
+          <input type="text" id="noR2T4LoanCreated">
+          <label for="noR2T4LoanDisbursed">Loan Disbursed Date</label>
+          <input type="text" id="noR2T4LoanDisbursed">
+        </div>
+
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="addCanceledAid">
+          <label for="addCanceledAid">Add "Canceled Pending Aid" to end</label>
+        </div>
+      </div>
+
+      <button type="button" id="btn-generate-inadvertent">Generate Comment</button>
+      <button type="button" class="reset-btn" id="btn-reset-inadvertent">🗑️ Reset All</button>
+      <h3>Generated Comment:</h3>
+      <pre id="inadvertentOutput" aria-live="polite"></pre>
+      <button type="button" id="btn-copy-inadvertent">Copy Comment to Clipboard</button>
+    </section>
+
+    <!-- Pell Overpayment Tool -->
+    <section id="pell-overpayment" class="tool-section" aria-hidden="true">
+      <h3>Pell Overpayment</h3>
+
+      <div class="field-group">
+        <h4>Amount Info</h4>
+        <label class="flow-indicator" for="pellOverAmount">Pell Return Amount</label>
+        <input type="text" id="pellOverAmount" placeholder="565 or $565">
+
+        <label class="flow-indicator" for="pellOverTerm">Award Term/Year</label>
+        <input type="text" id="pellOverTerm" placeholder="2026-10">
+      </div>
+
+      <div class="field-group">
+        <h4>Reason Details</h4>
+        <label class="flow-indicator" for="pellOverR2T4Date">R2T4 Processed Date</label>
+        <input type="text" id="pellOverR2T4Date" placeholder="9-16-2025">
+
+        <label class="flow-indicator" for="pellOverEligibility">Updated Pell Eligibility</label>
+        <input type="text" id="pellOverEligibility" placeholder="1481 or $1,481">
+      </div>
+
+      <button type="button" id="btn-generate-pell-over">Generate Comment</button>
+      <button type="button" class="reset-btn" id="btn-reset-pell-over">🗑️ Reset All</button>
+      <h3>Generated Comment:</h3>
+      <pre id="pellOverOutput" aria-live="polite"></pre>
+      <button type="button" id="btn-copy-pell-over">Copy Comment to Clipboard</button>
+    </section>
+
+    <!-- Post Withdrawal Letter Generator Tool -->
+    <section id="pwd-letter" class="tool-section" aria-hidden="true">
+      <h3>Post Withdrawal Letter Generator</h3>
+      <label for="studentName">Student Name:</label>
+      <input type="text" id="studentName">
+      <label for="studentId">Student ID:</label>
+      <input type="text" id="studentId">
+      <label for="ldp">Last Date of Participation:</label>
+      <input type="text" id="ldp" placeholder="MM/DD/YYYY or YYYY-MM-DD">
+      <label for="paymentEndDate">Payment Period End Date:</label>
+      <input type="text" id="paymentEndDate" placeholder="MM/DD/YYYY or YYYY-MM-DD">
+      <label for="program">Title IV Program:</label>
+      <select id="program">
+        <option value="Pell Grant">Pell Grant</option>
+        <option value="Direct Subsidized Loan">Direct Subsidized Loan</option>
+        <option value="Direct Unsubsidized Loan">Direct Unsubsidized Loan</option>
+        <option value="Parent PLUS Loan">Parent PLUS Loan</option>
+        <option value="Grad PLUS Loan">Grad PLUS Loan</option>
+      </select>
+      <label for="letterAmount">Amount Offered ($):</label>
+      <input type="number" step="0.01" id="letterAmount">
+      <button type="button" id="btn-generate-letter">Generate Letter</button>
+      <button type="button" class="reset-btn" id="btn-reset-letter">🗑️ Reset All</button>
+      <h3>Generated Letter:</h3>
+      <pre id="letterOutput" aria-live="polite"></pre>
+      <button type="button" id="btn-copy-letter">Copy Letter to Clipboard</button>
+    </section>
+  </div>
+
+  <!-- Success Toast -->
+  <div class="success-toast" id="successToast">✅ Copied to clipboard!</div>
+
+  <!-- Floating Calculator -->
+  <button class="calc-toggle" id="calcToggle">🧮 Calculator</button>
+
+  <div class="floating-calculator" id="floatingCalc">
+    <div class="calc-header" id="calcHeader">
+      <span>💫 Quick Calculator</span>
+      <div class="calc-header-buttons">
+        <button class="calc-minimize" id="calcMinimize" title="Minimize">−</button>
+        <button class="calc-close" id="calcClose" title="Close">×</button>
+      </div>
+    </div>
+    <div class="calc-body">
+      <div class="calc-target-info" id="targetInfo">Click any input field to target it</div>
+
+      <div class="calc-section" id="pwdSection">
+        <div class="calc-section-header" onclick="toggleCalcSection('pwdSection')">
+          <h4>Post Withdrawal Returns</h4>
+          <span class="calc-section-toggle">▼</span>
+        </div>
+        <div class="calc-section-content">
+          <div class="calc-row">
+            <span class="calc-label">Current Net:</span>
+            <input type="number" class="calc-input" id="pwdCurrentNet" placeholder="Current Net">
+          </div>
+          <div class="calc-row">
+            <span class="calc-label">Current Gross:</span>
+            <input type="number" class="calc-input" id="pwdCurrentGross" placeholder="Current Gross">
+          </div>
+          <div class="calc-row">
+            <span class="calc-label">Post Net:</span>
+            <input type="number" class="calc-input" id="pwdPostNet" placeholder="Post Net">
+          </div>
+          <div class="calc-row">
+            <span class="calc-label">Post Gross:</span>
+            <input type="number" class="calc-input" id="pwdPostGross" placeholder="Post Gross">
+          </div>
+          <div class="calc-result" id="pwdNetResult">
+            <span>Net Return: $0.00</span>
+            <button class="calc-send-btn" onclick="sendToTarget('pwd-net-return')">Send →</button>
+          </div>
+          <div class="calc-result" id="pwdGrossResult">
+            <span>Gross Return: $0.00</span>
+            <button class="calc-send-btn" onclick="sendToTarget('pwd-gross-return')">Send →</button>
+          </div>
+          <div class="calc-result" id="pwdEligibilityResult" style="background: #e3f2fd; margin-top: 8px;">
+            <span id="pwdEligFormatted">PWD Eligibility: --</span>
+            <button class="calc-send-btn" onclick="sendPWDEligibility()" style="background: #4CAF50;">Send to Form →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-section" id="pellSection">
+        <div class="calc-section-header" onclick="toggleCalcSection('pellSection')">
+          <h4>Pell Calculations</h4>
+          <span class="calc-section-toggle">▼</span>
+        </div>
+        <div class="calc-section-content">
+          <div class="calc-row">
+            <span class="calc-label">Current:</span>
+            <input type="number" class="calc-input" id="pellCurrentSched" placeholder="Current Scheduled">
+          </div>
+          <div class="calc-row">
+            <span class="calc-label">Updated:</span>
+            <input type="number" class="calc-input" id="pellUpdatedClass" placeholder="Updated Class Load">
+          </div>
+          <div class="calc-row">
+            <span class="calc-label">New:</span>
+            <input type="number" class="calc-input" id="pellNewSched" placeholder="New Scheduled">
+          </div>
+          <div class="calc-result" id="pellRTLResult">
+            <span>Pell RTL: $0.00</span>
+            <button class="calc-send-btn" onclick="sendToTarget('pell-rtl')">Send →</button>
+          </div>
+          <div class="calc-result" id="pellClassResult">
+            <span>Class Load Adj: $0.00</span>
+            <button class="calc-send-btn" onclick="sendToTarget('class-adj')">Send →</button>
+          </div>
+          <div class="calc-result" id="pellR2T4Result">
+            <span>R2T4 Adj: $0.00</span>
+            <button class="calc-send-btn" onclick="sendToTarget('r2t4-adj')">Send →</button>
+          </div>
+          <div class="calc-result" id="pellEligibilityFormatted" style="background: #e3f2fd; margin-top: 8px;">
+            <span id="pellEligText">Pell Eligibility: --</span>
+            <button class="calc-send-btn" onclick="sendPellEligibility()" style="background: #4CAF50;">Send to Form →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Utilities ----------
+    const $ = (id) => document.getElementById(id);
+
+    function clampStr(v) { return (v ?? '').toString().trim(); }
+
+    function formatMoneyLoose(val) {
+      const raw = clampStr(val).replace(/[^0-9.]/g, '');
+      if (!raw) return '';
+      const num = Number(raw);
+      if (Number.isNaN(num)) return '';
+      const hasCents = Math.round(num * 100) % 100 !== 0;
+      return '$' + num.toLocaleString('en-US', hasCents ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined);
+    }
+
+    function parseDateInput(value) {
+      const v = clampStr(value);
+      if (!v) return null;
+      const parts = v.split(/[\/\-]/);
+      if (parts.length === 3 && parts[0].length <= 2) {
+        const [m, d, y] = parts.map(p => parseInt(p, 10));
+        const year = y < 100 ? 2000 + y : y;
+        const dt = new Date(year, (m || 1) - 1, d || 1);
+        return isNaN(dt.getTime()) ? null : dt;
+      }
+      const dt = new Date(v);
+      return isNaN(dt.getTime()) ? null : dt;
+    }
+
+    function formatDateWithSuffix(date) {
+      if (!(date instanceof Date) || isNaN(date.getTime())) return '';
+      const day = date.getDate();
+      const suffix = (d => (d > 3 && d < 21) ? 'th' : (['th','st','nd','rd'][Math.min(d % 10, 4)] || 'th'))(day);
+      const month = date.toLocaleString('en-US', { month: 'long' });
+      const year = date.getFullYear();
+      return `${month} ${day}${suffix}, ${year}`;
+    }
+
+    function normalizeDateForComment(v) {
+      return clampStr(v).replace(/\//g, '-');
+    }
+
+    function setVisible(el, visible) {
+      el.classList.toggle('hidden', !visible);
+    }
+
+    // ---------- Shared constants ----------
+    const SHOW_DATE_REASONS = new Set([
+      'UNRESOLVED ELIGIBILITY STATUS',
+      'OFFICE USE ONLY- INTERNAL AUDIT- HOLD',
+      'Created loan(s) did not disburse due to FTP hold',
+      'created loan(s) did not disburse due to: UNRESOLVED SAP STATUS'
+    ]);
+
+    // ---------- Floating Calculator ----------
+    let activeTargetField = null;
+    let isDragging = false;
+    let dragOffset = { x: 0, y: 0 };
+
+    function initFloatingCalculator() {
+      const calcToggle = $('calcToggle');
+      const floatingCalc = $('floatingCalc');
+      const calcClose = $('calcClose');
+      const calcHeader = $('calcHeader');
+
+      // Toggle calculator visibility
+      calcToggle.addEventListener('click', () => {
+        const isVisible = floatingCalc.style.display === 'block';
+        floatingCalc.style.display = isVisible ? 'none' : 'block';
+        calcToggle.textContent = isVisible ? '🧮 Calculator' : '✖️ Close Calc';
+      });
+
+      // Close calculator
+      calcClose.addEventListener('click', () => {
+        floatingCalc.style.display = 'none';
+        calcToggle.textContent = '🧮 Calculator';
+      });
+
+      // Minimize calculator
+      const calcMinimize = $('calcMinimize');
+      const calcBody = floatingCalc.querySelector('.calc-body');
+      calcMinimize.addEventListener('click', () => {
+        const isMinimized = calcBody.classList.toggle('minimized');
+        calcMinimize.textContent = isMinimized ? '+' : '−';
+        calcMinimize.title = isMinimized ? 'Expand' : 'Minimize';
+      });
+
+      // Make calculator draggable
+      calcHeader.addEventListener('mousedown', startDrag);
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', stopDrag);
+
+      // Listen for input field targeting
+      document.addEventListener('click', (e) => {
+        if (e.target.matches('input[type="text"], input[type="number"]') &&
+            !e.target.closest('.floating-calculator')) {
+          setActiveTarget(e.target);
+        }
+      });
+
+      // Calculator input listeners
+      $('pwdCurrentGross').addEventListener('input', calculatePWD);
+      $('pwdCurrentNet').addEventListener('input', calculatePWD);
+      $('pwdPostGross').addEventListener('input', calculatePWD);
+      $('pwdPostNet').addEventListener('input', calculatePWD);
+      $('pellCurrentSched').addEventListener('input', calculatePell);
+      $('pellUpdatedClass').addEventListener('input', calculatePell);
+      $('pellNewSched').addEventListener('input', calculatePell);
+    }
+
+    function startDrag(e) {
+      isDragging = true;
+      const calc = $('floatingCalc');
+      const rect = calc.getBoundingClientRect();
+      dragOffset.x = e.clientX - rect.left;
+      dragOffset.y = e.clientY - rect.top;
+      calcHeader.style.cursor = 'grabbing';
+    }
+
+    function drag(e) {
+      if (!isDragging) return;
+      e.preventDefault();
+      const calc = $('floatingCalc');
+      calc.style.left = (e.clientX - dragOffset.x) + 'px';
+      calc.style.top = (e.clientY - dragOffset.y) + 'px';
+      calc.style.right = 'auto';
+    }
+
+    function stopDrag() {
+      isDragging = false;
+      calcHeader.style.cursor = 'move';
+    }
+
+    function setActiveTarget(field) {
+      activeTargetField = field;
+      const fieldName = field.placeholder || field.id || 'Selected field';
+      $('targetInfo').textContent = `Target: ${fieldName}`;
+      $('targetInfo').style.background = '#e8f5e8';
+    }
+
+    function toggleCalcSection(sectionId) {
+      const section = $(sectionId);
+      if (section) {
+        section.classList.toggle('collapsed');
+      }
+    }
+
+    function calculatePWD() {
+      const currentGross = Number($('pwdCurrentGross').value) || 0;
+      const currentNet = Number($('pwdCurrentNet').value) || 0;
+      const postGross = Number($('pwdPostGross').value) || 0;
+      const postNet = Number($('pwdPostNet').value) || 0;
+
+      const grossReturn = currentGross - postGross;
+      const netReturn = currentNet - postNet;
+
+      $('pwdGrossResult').querySelector('span').textContent = `Gross Return: ${formatMoneyLoose(grossReturn.toString())}`;
+      $('pwdNetResult').querySelector('span').textContent = `Net Return: ${formatMoneyLoose(netReturn.toString())}`;
+
+      // Format PWD Eligibility based on source type - uses POST values (what student is eligible for)
+      updatePWDEligibilityPreview(postNet, postGross);
+    }
+
+    function updatePWDEligibilityPreview(postNet, postGross) {
+      const source = clampStr($('source').value).toUpperCase();
+      const netFormatted = formatMoneyLoose(postNet.toString());
+      const grossFormatted = formatMoneyLoose(postGross.toString());
+
+      let eligText = '';
+      if (postNet === 0 && postGross === 0) {
+        eligText = 'PWD Eligibility: --';
+      } else if (source === 'PELL') {
+        eligText = `${netFormatted} PELL ONLY`;
+      } else {
+        // For loans: DLU, DLS, DLGP, FSEOG
+        eligText = `${netFormatted} ${source} (${grossFormatted} Gross)`;
+      }
+
+      $('pwdEligFormatted').textContent = eligText;
+    }
+
+    function sendPWDEligibility() {
+      const eligText = $('pwdEligFormatted').textContent;
+      if (eligText === 'PWD Eligibility: --') {
+        alert('Please enter values in the calculator first!');
+        return;
+      }
+
+      const pwdField = $('pwdEligibility');
+      if (pwdField) {
+        pwdField.value = eligText;
+        pwdField.focus();
+
+        // Flash the field to show it was updated
+        pwdField.style.background = '#e8f5e8';
+        setTimeout(() => {
+          pwdField.style.background = '';
+        }, 1000);
+      } else {
+        alert('PWD Eligibility field not found. Make sure you have Post Withdrawal selected.');
+      }
+    }
+
+    function calculatePell() {
+      const currentSched = Number($('pellCurrentSched').value) || 0;
+      const updatedClass = Number($('pellUpdatedClass').value) || 0;
+      const newSched = Number($('pellNewSched').value) || 0;
+
+      const pellRTL = currentSched - newSched;
+      const classLoadChange = currentSched - updatedClass;
+      const r2t4Adjustment = updatedClass - newSched;
+
+      $('pellRTLResult').querySelector('span').textContent = `Pell RTL: ${formatMoneyLoose(pellRTL.toString())}`;
+      $('pellClassResult').querySelector('span').textContent = `Class Load Adj: ${formatMoneyLoose(classLoadChange.toString())}`;
+      $('pellR2T4Result').querySelector('span').textContent = `R2T4 Adj: ${formatMoneyLoose(r2t4Adjustment.toString())}`;
+
+      // Update Pell Eligibility formatted preview
+      if (newSched === 0) {
+        $('pellEligText').textContent = 'Pell Eligibility: --';
+      } else {
+        $('pellEligText').textContent = `${formatMoneyLoose(newSched.toString())} PELL ONLY`;
+      }
+    }
+
+    function sendPellEligibility() {
+      const eligText = $('pellEligText').textContent;
+      if (eligText === 'Pell Eligibility: --') {
+        alert('Please enter values in the Pell calculator first!');
+        return;
+      }
+
+      // Check which field is appropriate based on current form state
+      const commentType = $('commentType').value;
+      const pellEligField = $('pellEligibility');
+      const pwdEligField = $('pwdEligibility');
+
+      let targetField = null;
+
+      // If Post Withdrawal is selected, send to PWD Eligibility field
+      if (commentType === 'postWithdrawal' && pwdEligField) {
+        targetField = pwdEligField;
+      }
+      // Otherwise, try Pell Eligibility field (Standard R2T4)
+      else if (pellEligField && pellEligField.style.display !== 'none') {
+        targetField = pellEligField;
+      }
+      // Fallback: if neither works but PWD field exists, use it
+      else if (pwdEligField) {
+        targetField = pwdEligField;
+      }
+
+      if (targetField) {
+        targetField.value = eligText;
+        targetField.focus();
+
+        // Flash the field to show it was updated
+        targetField.style.background = '#e8f5e8';
+        setTimeout(() => {
+          targetField.style.background = '';
+        }, 1000);
+      } else {
+        alert('No eligibility field found. Make sure:\n- Standard R2T4 tool is selected\n- PELL is selected as the source');
+      }
+    }
+
+    function sendToTarget(calcType) {
+      if (!activeTargetField) {
+        alert('Please click on an input field first to target it!');
+        return;
+      }
+
+      let value = '';
+      switch(calcType) {
+        case 'pwd-gross-return':
+          const currentGross = Number($('pwdCurrentGross').value) || 0;
+          const postGross = Number($('pwdPostGross').value) || 0;
+          value = formatMoneyLoose((currentGross - postGross).toString());
+          break;
+        case 'pwd-net-return':
+          const currentNet = Number($('pwdCurrentNet').value) || 0;
+          const postNet = Number($('pwdPostNet').value) || 0;
+          value = formatMoneyLoose((currentNet - postNet).toString());
+          break;
+        case 'pell-rtl':
+          const currentSched = Number($('pellCurrentSched').value) || 0;
+          const newSched = Number($('pellNewSched').value) || 0;
+          value = formatMoneyLoose((currentSched - newSched).toString());
+          break;
+        case 'class-adj':
+          const currentSched2 = Number($('pellCurrentSched').value) || 0;
+          const updatedClass = Number($('pellUpdatedClass').value) || 0;
+          value = formatMoneyLoose((currentSched2 - updatedClass).toString());
+          break;
+        case 'r2t4-adj':
+          const updatedClass2 = Number($('pellUpdatedClass').value) || 0;
+          const newSched2 = Number($('pellNewSched').value) || 0;
+          value = formatMoneyLoose((updatedClass2 - newSched2).toString());
+          break;
+      }
+
+      activeTargetField.value = value;
+      activeTargetField.focus();
+
+      // Flash the target field
+      activeTargetField.style.background = '#e8f5e8';
+      setTimeout(() => {
+        activeTargetField.style.background = '';
+      }, 1000);
+    }
+
+    // ---------- Reset Functions ----------
+    function resetStandardForm() {
+      // Reset all standard R2T4 fields
+      const fields = ['amount', 'gross', 'term', 'code', 'credits', 'dod', 'r2wd', 'deadline',
+                     'pellEligibility', 'cla', 'r2t4Adj', 'loanCreated', 'loanDisbursed',
+                     'isirDate', 'pellDisbursed', 'pwdEligibility', 'quickCode', 'quickDod',
+                     'quickR2wd', 'quickDeadline'];
+      fields.forEach(id => {
+        const el = $(id);
+        if (el) el.value = '';
+      });
+
+      // Reset selects
+      $('commentType').value = 'standard';
+      $('source').value = 'PELL';
+
+      // Reset checkboxes
+      $('quickMode').checked = false;
+
+      // Clear output
+      $('standardOutput').textContent = '';
+
+      // Reset UI state
+      toggleQuickMode();
+      updateSourceFields();
+      toggleStandardFields();
+    }
+
+    function resetInadvertentForm() {
+      // Reset inadvertent fields
+      const fields = ['invAmount', 'invGross', 'invTerm', 'invDod', 'invR2wd', 'invDeadline',
+                     'invLoanCreated', 'invLoanDisbursed', 'noR2T4Term', 'noR2T4Date',
+                     'noR2T4LoanCreated', 'noR2T4LoanDisbursed'];
+      fields.forEach(id => {
+        const el = $(id);
+        if (el) el.value = '';
+      });
+
+      // Reset selects
+      $('inadvertentCommentType').value = 'inadvertent';
+      $('invSource').value = 'PELL';
+      $('invCode').value = 'A';
+      $('noR2T4Code').value = 'A';
+      $('noR2T4Reason').value = 'PENDING AWARD(S) STUDENT DID NOT ACCEPT';
+
+      // Reset checkboxes
+      $('useR2T4Review').checked = false;
+      $('addCanceledAid').checked = false;
+
+      // Clear output
+      $('inadvertentOutput').textContent = '';
+
+      // Reset UI state
+      toggleInadvertentFields();
+    }
+
+    function resetLetterForm() {
+      // Reset letter fields
+      const fields = ['studentName', 'studentId', 'ldp', 'paymentEndDate', 'letterAmount'];
+      fields.forEach(id => {
+        const el = $(id);
+        if (el) el.value = '';
+      });
+
+      // Reset select
+      $('program').value = 'Pell Grant';
+
+      // Clear output
+      $('letterOutput').textContent = '';
+    }
+
+    function showSuccessToast() {
+      const toast = $('successToast');
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+
+    // ---------- Wiring ----------
+    document.addEventListener('DOMContentLoaded', () => {
+      // Tool switcher
+      $('toolType').addEventListener('change', onToolChange);
+
+      // Standard R2T4 listeners
+      $('quickMode').addEventListener('change', toggleQuickMode);
+      $('commentType').addEventListener('change', toggleStandardFields);
+      $('source').addEventListener('change', () => {
+        updateSourceFields();
+        // Recalculate PWD preview when source changes
+        calculatePWD();
+      });
+      $('btn-generate-standard').addEventListener('click', generateStandardComment);
+      $('btn-copy-standard').addEventListener('click', copyStandardText);
+      $('btn-reset-standard').addEventListener('click', resetStandardForm);
+
+      // Inadvertent / No R2T4 listeners
+      $('inadvertentCommentType').addEventListener('change', toggleInadvertentFields);
+      $('noR2T4Reason').addEventListener('change', handleNoR2T4ReasonChange);
+      $('btn-generate-inadvertent').addEventListener('click', generateInadvertentComment);
+      $('btn-copy-inadvertent').addEventListener('click', copyInadvertentText);
+      $('btn-reset-inadvertent').addEventListener('click', resetInadvertentForm);
+
+      // Pell Overpayment
+      $('btn-generate-pell-over').addEventListener('click', generatePellOverpayment);
+      $('btn-copy-pell-over').addEventListener('click', copyPellOverText);
+      $('btn-reset-pell-over').addEventListener('click', resetPellOverForm);
+
+      // Letter
+      $('btn-generate-letter').addEventListener('click', generateLetter);
+      $('btn-copy-letter').addEventListener('click', copyLetterToClipboard);
+      $('btn-reset-letter').addEventListener('click', resetLetterForm);
+
+      // Initialize floating calculator
+      initFloatingCalculator();
+
+      // Initial UI state
+      updateSourceFields();
+      toggleInadvertentFields();
+      console.log('R2T4 app ready');
+    });
+
+    // ---------- Tool switching ----------
+    function onToolChange() {
+      const val = $('toolType').value;
+      document.querySelectorAll('.tool-section').forEach(sec => {
+        const active = sec.id === val && !!val;
+        sec.classList.toggle('active', active);
+        sec.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
+    }
+
+    // ---------- Standard R2T4 ----------
+    function toggleQuickMode() {
+      const isQuick = $('quickMode').checked;
+      setVisible($('fullModeFields'), !isQuick);
+      setVisible($('quickModeFields'), isQuick);
+
+      if (!isQuick) {
+        updateSourceFields();
+        toggleStandardFields();
+      }
+    }
+
+    function toggleStandardFields() {
+      const type = $('commentType').value;
+      const isQuick = $('quickMode').checked;
+      const source = $('source').value;
+
+      setVisible($('postWithdrawalFields'), !isQuick && type === 'postWithdrawal');
+
+      // Show Pell Eligibility field only for Standard R2T4 with PELL/FSEOG source, not Post Withdrawal
+      const showPellElig = !isQuick && (source === 'PELL' || source === 'FSEOG') && type === 'standard';
+      const pellEligField = $('pellEligibility');
+      const pellEligLabel = pellEligField ? pellEligField.previousElementSibling : null;
+
+      if (pellEligField) pellEligField.style.display = showPellElig ? 'block' : 'none';
+      if (pellEligLabel) pellEligLabel.style.display = showPellElig ? 'block' : 'none';
+    }
+
+    function updateSourceFields() {
+      const source = $('source').value;
+      const showPell = source === 'PELL' || source === 'FSEOG';
+      const isQuick = $('quickMode').checked;
+
+      $('creditsLabel').style.display = (!isQuick && showPell) ? 'block' : 'none';
+      $('credits').style.display = (!isQuick && showPell) ? 'block' : 'none';
+      setVisible($('pellFields'), !isQuick && showPell);
+
+      // Hide Gross Return Amount for PELL and FSEOG
+      const grossLabel = $('gross').previousElementSibling;
+      $('gross').style.display = showPell ? 'none' : 'block';
+      if (grossLabel) grossLabel.style.display = showPell ? 'none' : 'block';
+
+      // Also update the Pell Eligibility field visibility based on comment type
+      toggleStandardFields();
+    }
+
+    function generateStandardComment() {
+      const isQuick = $('quickMode').checked;
+      const type = $('commentType').value;
+      const source = clampStr($('source').value).toUpperCase();
+
+      let comment = '';
+
+      if (isQuick) {
+        const code = $('quickCode').value;
+        const dod = normalizeDateForComment($('quickDod').value);
+        const r2wd = normalizeDateForComment($('quickR2wd').value);
+        const deadline = normalizeDateForComment($('quickDeadline').value);
+
+        if (source === 'PELL' || source === 'FSEOG') {
+          comment = `   ${source}   (   )      R2T4 Code ${code}\nPell Credits: \n`;
+        } else {
+          comment = `   ${source}   (   gross)      R2T4 Code ${code}\n`;
+        }
+        comment += `DOD: ${dod} and R2WD ${r2wd}\n`;
+
+        if ((source === 'PELL' || source === 'FSEOG') && type === 'standard') {
+          comment += `Pell Eligibility: \n`;
+        }
+
+        if (type === 'postWithdrawal') {
+          comment += `Loan(s) created & disbursed:  and \n`;
+          if (source === 'PELL' || source === 'FSEOG') {
+            comment += `Grant(s) ISIR date & disbursed- Pell:  and \n`;
+          }
+          comment += `PWD Eligibility: \n`;
+        }
+        comment += `R2T4 Deadline (30 Day): ${deadline}`;
+      } else {
+        const code = $('code').value;
+        const dod = normalizeDateForComment($('dod').value);
+        const r2wd = normalizeDateForComment($('r2wd').value);
+        const deadline = normalizeDateForComment($('deadline').value);
+        const amount = formatMoneyLoose($('amount').value);
+        const term = clampStr($('term').value);
+        const credits = clampStr($('credits').value);
+
+        let paren = '';
+        const isPellType = source === 'PELL' || source === 'FSEOG';
+        if (isPellType) {
+          const cla = formatMoneyLoose($('cla').value);
+          const r2adj = formatMoneyLoose($('r2t4Adj').value);
+          const pieces = [];
+          if (cla) pieces.push(`${cla} class load adj.`);
+          if (r2adj) pieces.push(`${r2adj} R2T4 adj.`);
+          paren = `(${pieces.join(' & ')})`;
+        } else {
+          const gross = formatMoneyLoose($('gross').value);
+          paren = `(${gross} gross)`;
+        }
+
+        comment = `${amount}   ${source}   ${paren}   ${term}   R2T4 Code ${code}\n`;
+        if (isPellType && credits) comment += `Pell Credits: ${credits}\n`;
+        comment += `DOD: ${dod} and R2WD ${r2wd}\n`;
+
+        if (isPellType && type === 'standard') {
+          const pelRaw = clampStr($('pellEligibility').value);
+          if (pelRaw) {
+            const pelFmt = /\\d/.test(pelRaw) ? formatMoneyLoose(pelRaw) : pelRaw;
+            comment += `Pell Eligibility: ${pelFmt}\n`;
+          }
+        }
+
+        if (type === 'postWithdrawal') {
+          const loanCreated = normalizeDateForComment($('loanCreated').value);
+          const loanDisbursed = normalizeDateForComment($('loanDisbursed').value);
+          // Only show loan dates line if at least one is filled in
+          if (loanCreated || loanDisbursed) {
+            comment += `Loan(s) created & disbursed: ${loanCreated} and ${loanDisbursed}\n`;
+          }
+
+          if (source === 'PELL' || source === 'FSEOG') {
+            const isirDate = normalizeDateForComment($('isirDate').value);
+            const pellDisp = normalizeDateForComment($('pellDisbursed').value);
+            if (isirDate || pellDisp) {
+              comment += `Grant(s) ISIR date & disbursed- Pell: ${isirDate} and ${pellDisp}\n`;
+            }
+          }
+
+          const pwdRaw = clampStr($('pwdEligibility').value);
+          if (pwdRaw) {
+            const pwdFmt = /\\d/.test(pwdRaw) ? formatMoneyLoose(pwdRaw) : pwdRaw;
+            comment += `PWD Eligibility: ${pwdFmt}\n`;
+          }
+        }
+        comment += `R2T4 Deadline (30 Day): ${deadline}`;
+      }
+
+      $('standardOutput').textContent = comment;
+    }
+
+    function copyStandardText() {
+      const content = clampStr($('standardOutput').innerText);
+      if (!content) return;
+      navigator.clipboard.writeText(content);
+      showSuccessToast();
+    }
+
+    // ---------- Inadvertent / No R2T4 ----------
+    function toggleInadvertentFields() {
+      const type = $('inadvertentCommentType').value;
+      setVisible($('inadvertentFields'), type === 'inadvertent');
+      setVisible($('noR2T4Fields'), type !== 'inadvertent');
+      $('inadvertentOutput').innerText = '';
+      handleNoR2T4ReasonChange();
+    }
+
+    function handleNoR2T4ReasonChange() {
+      const reason = $('noR2T4Reason').value;
+      const showExtraDate = SHOW_DATE_REASONS.has(reason);
+      const showLoanDate = reason === 'STU WAS PACKAGED AFTER LDP';
+
+      setVisible($('noR2T4ExtraDate'), showExtraDate);
+      setVisible($('noR2T4LoanDates'), showLoanDate);
+    }
+
+    function generateInadvertentComment() {
+      const type = $('inadvertentCommentType').value;
+      let comment = '';
+
+      if (type === 'inadvertent') {
+        const amount = formatMoneyLoose($('invAmount').value);
+        const source = clampStr($('invSource').value).toUpperCase();
+        const gross = formatMoneyLoose($('invGross').value);
+        const term = clampStr($('invTerm').value);
+        const code = $('invCode').value;
+        const dod = normalizeDateForComment($('invDod').value);
+        const r2wd = normalizeDateForComment($('invR2wd').value);
+        const deadline = normalizeDateForComment($('invDeadline').value);
+        const created = normalizeDateForComment($('invLoanCreated').value);
+        const disbursed = normalizeDateForComment($('invLoanDisbursed').value);
+
+        comment += `${amount}   ${source}   (${gross})   ${term}   R2T4 Code ${code}\n`;
+        comment += `DOD: ${dod} and R2WD: ${r2wd}\n`;
+        // Only show loan dates line if at least one is filled in
+        if (created || disbursed) {
+          comment += `Loan(s) created & disbursed: ${created} and ${disbursed}\n`;
+        }
+        comment += `PWD Eligibility: NOT ELIGIBLE FOR LOAN DISBURSEMENT INADVERTANT OVERPAYMENT (originated after LDP & disbursed on or before DOD)\n`;
+        comment += `R2T4 Deadline (30 Day): ${deadline}`;
+      } else {
+        const useR2T4Review = $('useR2T4Review').checked;
+        const code = $('noR2T4Code').value;
+        const term = clampStr($('noR2T4Term').value);
+        const reason = $('noR2T4Reason').value;
+        const extraDate = normalizeDateForComment($('noR2T4Date')?.value || '');
+        const loanCreated = normalizeDateForComment($('noR2T4LoanCreated')?.value || '');
+        const loanDisbursed = normalizeDateForComment($('noR2T4LoanDisbursed')?.value || '');
+        const addCanceledAid = $('addCanceledAid').checked;
+
+        if (useR2T4Review) {
+          comment += `R2T4 Review: ${term}\n`;
+          comment += `${reason}\n`;
+          comment += `LOANS INELIGIBLE FOR USE IN R2T4 CALCULATION; Canceled pending loans;`;
+        } else {
+          comment += `NO R2T4 REQUIRED:   Code ${code}   ${term}\n`;
+          comment += `R2T4 Status: INELIGIBLE\n`;
+
+          if (SHOW_DATE_REASONS.has(reason)) {
+            comment += `Reason: Created loan(s) - ${reason} (${extraDate})\n`;
+          } else if (reason === 'STU WAS PACKAGED AFTER LDP') {
+            comment += `Reason: Created loan(s) - ${reason} (created ${loanCreated}, disbursed ${loanDisbursed})\n`;
+          } else {
+            comment += `Reason: Created loan(s) - ${reason}\n`;
+          }
+
+          comment += `Action: saved R2T4 in the processor${addCanceledAid ? ', Canceled Pending Aid' : ''}`;
+        }
+      }
+
+      $('inadvertentOutput').innerText = comment;
+    }
+
+    function copyInadvertentText() {
+      const txt = clampStr($('inadvertentOutput').innerText);
+      if (!txt) return;
+      navigator.clipboard.writeText(txt);
+      showSuccessToast();
+    }
+
+    // ---------- Pell Overpayment ----------
+    function generatePellOverpayment() {
+      const amount = formatMoneyLoose($('pellOverAmount').value);
+      const term = clampStr($('pellOverTerm').value);
+      const r2t4Date = clampStr($('pellOverR2T4Date').value);
+      const eligibility = formatMoneyLoose($('pellOverEligibility').value);
+
+      const comment = `${amount}   Pell  ${term}
+Reason: Additional Pell funds must be returned from R2T4 processed on ${r2t4Date} because there was a portion of Pell funds after the calculation that we need to return for the student.
+Updated Pell Eligibility: ${eligibility}`;
+
+      $('pellOverOutput').textContent = comment;
+    }
+
+    function copyPellOverText() {
+      const txt = clampStr($('pellOverOutput').textContent);
+      if (!txt) return;
+      navigator.clipboard.writeText(txt);
+      showSuccessToast();
+    }
+
+    function resetPellOverForm() {
+      const fields = ['pellOverAmount', 'pellOverTerm', 'pellOverR2T4Date', 'pellOverEligibility'];
+      fields.forEach(id => {
+        const el = $(id);
+        if (el) el.value = '';
+      });
+      $('pellOverOutput').textContent = '';
+    }
+
+    // ---------- Letter ----------
+    function generateLetter() {
+      const today = new Date();
+      const responseDate = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
+      const letterDate = formatDateWithSuffix(today);
+      const dueDate = formatDateWithSuffix(responseDate);
+
+      const name = clampStr($('studentName').value);
+      const id = clampStr($('studentId').value);
+
+      const ldp = parseDateInput($('ldp').value);
+      const ldpFormatted = formatDateWithSuffix(ldp);
+
+      const paymentEnd = parseDateInput($('paymentEndDate').value);
+      const paymentEndFormatted = formatDateWithSuffix(paymentEnd);
+
+      const program = $('program').value;
+      const amount = formatMoneyLoose($('letterAmount').value);
+
+      const disbursementSentence = program === 'Pell Grant' ? 'Federal Pell Grant' : 'federal Direct Loan funds';
+      const isLoan = /loan/i.test(program);
+      const repaymentNote = isLoan
+        ? ' By accepting this post-withdrawal offer and disbursement of funds to your account, you are acknowledging that you are responsible for repaying the borrowed amount to the lender.'
+        : '';
+
+      const letter =
+`${letterDate}
+
+ID: ${id}
+
+Dear ${name}:
+
+According to our records, your last date of participation was ${ldpFormatted} at Walden University for a payment period scheduled to end on ${paymentEndFormatted}. Federal regulations require Walden University to use the "Federal Return of Title IV Funds Policy" (R2T4) when a federal financial aid recipient withdraws prior to participating at least 60.1% of the quarter/semester. This refund policy is independent of Walden's institutional tuition adjustment policy.
+
+We determined the date of your intent to withdraw is earlier than the disbursement date of your ${disbursementSentence}; however, you are entitled to receive a post-withdrawal disbursement. It is your right as a federal financial aid recipient to accept/decline all or a portion of the funds offered to you. Should you decide to decline this offer, no further action is required. You may accept all or a portion of this offer by completing the section below in your response to this email.
+
+The accepted post-withdrawal disbursement amount will be paid directly to your Walden student account. Walden University reserves the right to apply the post-withdrawal funds to outstanding charges first; excess funds will be refunded to you within 14 calendar days.${repaymentNote}
+
+Please indicate the dollar amount of the post-withdrawal offer you would like to accept in your email response. We must have your email response by ${dueDate} if you wish to accept the post-withdrawal disbursement. If you have not responded to this email within the 14 calendar days allotted, Walden University is not required to make the post-withdrawal disbursement.
+
+Title IV Program: ${program}
+Amount Offered: ${amount}`;
+
+      $('letterOutput').textContent = letter;
+    }
+
+    function copyLetterToClipboard() {
+      const txt = clampStr($('letterOutput').textContent);
+      if (!txt) return;
+      navigator.clipboard.writeText(txt);
+      showSuccessToast();
+    }
+  </script>
+</body>
+</html>
